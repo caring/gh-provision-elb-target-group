@@ -2,7 +2,7 @@
 
 ## Description
 
-This GitHub Action provisions an Elastic Load Balancer (ELB) target group. It creates a new target group with the specified name in the specified VPC. The target group listens on port 3000 for HTTP traffic, uses IP as target type, and uses HTTP health checks on the "/health" path every 30 seconds, expecting HTTP status codes in the range 200-299.
+This GitHub Action provisions an Elastic Load Balancer (ELB) target group. It creates a new target group with the specified name in the specified VPC. The target group listens on a specified port for HTTP traffic, uses IP as target type, and uses HTTP health checks on the "/health" path every 30 seconds, expecting HTTP status codes in the range 200-299.
 
 ## Inputs
 
@@ -11,6 +11,7 @@ This GitHub Action provisions an Elastic Load Balancer (ELB) target group. It cr
 | `elbName`             | The name of the Elastic Load Balancer (ELB).                 | ✔        | 'ecs-modular-monolith'   |
 | `targetGroupName`     | The name for the new target group.                           | ✔        |                          |
 | `vpcId`               | The ID of the VPC where the target group is to be created.   | ✔        |                          |
+| `port`                | The port on which the target group will listen.              | ✔        | 3000                     |
 
 ## Outputs
 
@@ -34,6 +35,7 @@ jobs:
                    elbName: 'your-elb-name'
                    targetGroupName: 'your-target-group-name'
                    vpcId: 'your-vpc-id'
+                   port: 3000
 
             - name: Print Existing ELB Target Groups
                 run: |

@@ -13,6 +13,9 @@ inputs:
   vpcId:
     description: 'The ID of the VPC where the target group is to be created'
     required: true
+  port:
+    description: 'The port on which the target group will listen'
+    required: true
 
 runs:
   using: "composite"
@@ -24,7 +27,7 @@ runs:
         NEW_TARGET_GROUP=$(aws elbv2 create-target-group \
             --name "${{ inputs.targetGroupName }}" \
             --protocol HTTP \
-            --port 3000 \
+            --port "${{ inputs.port }}" \
             --target-type "ip" \
             --vpc-id "${{ inputs.vpcId }}" \
             --health-check-protocol HTTP \
