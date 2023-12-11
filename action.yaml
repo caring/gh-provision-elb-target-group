@@ -45,8 +45,3 @@ runs:
         else
             echo "ELB target group was created successfully"
         fi
-
-        # List existing target groups
-        echo "Existing ELB target groups:"
-        TARGET_GROUPS=$(aws elbv2 describe-target-groups)
-        echo "$TARGET_GROUPS" | jq -r '.TargetGroups[] | "Name: \(.TargetGroupName), ARN: \(.TargetGroupArn), Protocol: \(.Protocol), Port: \(.Port)"'
