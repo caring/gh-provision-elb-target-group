@@ -2,7 +2,7 @@
 
 ## Description
 
-This GitHub Action provisions an Elastic Load Balancer (ELB) target group. It creates a new target group with the specified name in the specified VPC. The target group listens on a specified port for HTTP traffic, uses IP as target type, and uses HTTP health checks on the "/health" path every 30 seconds, expecting HTTP status codes in the range 200-299.
+This GitHub Action provisions an Elastic Load Balancer (ELB) target group. If a target group with the specified name already exists, the action will use the existing target group. Otherwise, it creates a new target group with the specified name in the specified VPC. The target group listens on a specified port for HTTP traffic, uses IP as target type, and uses HTTP health checks on the "/health" path every 30 seconds, expecting HTTP status codes in the range 200-299.
 
 ## Inputs
 
@@ -17,7 +17,7 @@ This GitHub Action provisions an Elastic Load Balancer (ELB) target group. It cr
 
 | Name                  | Description                                                  |
 | --------------------- | ------------------------------------------------------------ |
-| `targetGroupArn`      | The ARN of the created target group.                         |
+| `targetGroupArn`      | The ARN of the created or existing target group.             |
 
 ## Example Usage
 
@@ -32,7 +32,7 @@ jobs:
 
             - name: Provision ELB Target Group
                 id: elb-target-group
-                uses: caring/gh-create-elb-target-group@v1.0.0
+                uses: caring/gh-provision-elb-target-group@v1.0.0
                 with:
                    elbName: 'your-elb-name'
                    targetGroupName: 'your-target-group-name'
@@ -41,5 +41,5 @@ jobs:
 
             - name: Print Target Group ARN
                 run: |
-                    echo "Created target group ARN:"
+                    echo "Target group ARN:"
                     echo "${{ steps.elb-target-group.outputs.targetGroupArn }}"

@@ -29,6 +29,15 @@ runs:
       name: Provision ELB Target Group
       shell: bash
       run: |
+        # Check if target group already exists
+        EXISTING_TARGET_GROUP=$(aws elbv2 describe-target-groups --names "${{ inputs.targetGroupName }}" --query 'TargetGroups[0].TargetGroupArn' --output text)
+
+        if [ "$EXISTING_TARGET_GROUP" != "None" ]; then
+            echo "Target group already exists with ARN: $EXISTING_TARGET_GROUP"
+            echo "targetGroupArn=$EXISTING_TARGET_GROUP" >> $GITHUB_ENV
+            exit 0
+        fi
+
         # Create new target group
         NEW_TARGET_GROUP=$(aws elbv2 create-target-group \
             --name "${{ inputs.targetGroupName }}" \
