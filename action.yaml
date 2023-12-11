@@ -50,5 +50,5 @@ runs:
             exit 1
         else
             echo "ELB target group was created successfully"
-            echo "::set-output name=targetGroupArn::$NEW_TARGET_GROUP_ARN"
+            echo "targetGroupArn=$NEW_TARGET_GROUP_ARN" >> $GITHUB_ENV
         fi
