@@ -30,7 +30,7 @@ jobs:
 
             - name: Provision ELB Target Group
                 id: elb-target-group
-                uses: caring/gh-create-elb-target-group@v1.0.0
+                uses: caring/gh-provision-elb-target-group@v1.0.0
                 with:
                    elbName: 'your-elb-name'
                    targetGroupName: 'your-target-group-name'
