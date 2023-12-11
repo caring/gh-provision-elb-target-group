@@ -1,0 +1,49 @@
+name: provision-ELB-target-group
+description: Provision ELB Target Group
+author: DevOps Team
+
+inputs:
+  elbName:
+    description: 'The name of the Elastic Load Balancer (ELB)'
+    required: true
+    default: 'ecs-modular-monolith'
+  targetGroupName:
+    description: 'The name for the new target group'
+    required: true
+  vpcId:
+    description: 'The ID of the VPC where the target group is to be created'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Provision ELB Target Group
+      shell: bash
+      run: |
+        # Create new target group
+        NEW_TARGET_GROUP=$(aws elbv2 create-target-group \
+            --name "${{ inputs.targetGroupName }}" \
+            --protocol HTTP \
+            --port 3000 \
+            --target-type "ip" \
+            --vpc-id "${{ inputs.vpcId }}" \
+            --health-check-protocol HTTP \
+            --health-check-path "/health" \
+            --health-check-interval-seconds 30 \
+            --matcher '{"HttpCode": "200,299"}')
+
+        # Get the new target group ARN
+        NEW_TARGET_GROUP_ARN=$(echo $NEW_TARGET_GROUP | jq -r '.TargetGroups[].TargetGroupArn')
+
+        # Validate that the target group was created
+        if [ -z "$NEW_TARGET_GROUP_ARN" ]; then
+            echo "Failed to create ELB target group"
+            exit 1
+        else
+            echo "ELB target group was created successfully"
+        fi
+
+        # List existing target groups
+        echo "Existing ELB target groups:"
+        TARGET_GROUPS=$(aws elbv2 describe-target-groups)
+        echo "$TARGET_GROUPS" | jq -r '.TargetGroups[] | "Name: \(.TargetGroupName), ARN: \(.TargetGroupArn), Protocol: \(.Protocol), Port: \(.Port)"'
