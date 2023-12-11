@@ -11,11 +11,13 @@ This GitHub Action provisions an Elastic Load Balancer (ELB) target group. It cr
 | `elbName`             | The name of the Elastic Load Balancer (ELB).                 | ✔        | 'ecs-modular-monolith'   |
 | `targetGroupName`     | The name for the new target group.                           | ✔        |                          |
 | `vpcId`               | The ID of the VPC where the target group is to be created.   | ✔        |                          |
-| `port`                | The port on which the target group will listen.              | ✔        |                          |
+| `port`                | The port on which the target group will listen.              | ✔        | 3000                     |
 
 ## Outputs
 
-This action doesn't have any outputs.
+| Name                  | Description                                                  |
+| --------------------- | ------------------------------------------------------------ |
+| `targetGroupArn`      | The ARN of the created target group.                         |
 
 ## Example Usage
 
@@ -30,9 +32,14 @@ jobs:
 
             - name: Provision ELB Target Group
                 id: elb-target-group
-                uses: caring/gh-provision-elb-target-group@v1.0.0
+                uses: caring/gh-create-elb-target-group@v1.0.0
                 with:
                    elbName: 'your-elb-name'
                    targetGroupName: 'your-target-group-name'
                    vpcId: 'your-vpc-id'
                    port: 3000
+
+            - name: Print Target Group ARN
+                run: |
+                    echo "Created target group ARN:"
+                    echo "${{ steps.elb-target-group.outputs.targetGroupArn }}"
