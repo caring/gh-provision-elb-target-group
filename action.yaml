@@ -17,10 +17,16 @@ inputs:
     description: 'The port on which the target group will listen'
     required: true
 
+outputs:
+  targetGroupArn:
+    description: 'The ARN of the created target group'
+    value: ${{ steps.create.outputs.targetGroupArn }}
+
 runs:
   using: "composite"
   steps:
-    - name: Provision ELB Target Group
+    - id: create
+      name: Provision ELB Target Group
       shell: bash
       run: |
         # Create new target group
@@ -44,4 +50,5 @@ runs:
             exit 1
         else
             echo "ELB target group was created successfully"
+            echo "::set-output name=targetGroupArn::$NEW_TARGET_GROUP_ARN"
         fi
