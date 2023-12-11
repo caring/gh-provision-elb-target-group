@@ -11,7 +11,7 @@ This GitHub Action provisions an Elastic Load Balancer (ELB) target group. It cr
 | `elbName`             | The name of the Elastic Load Balancer (ELB).                 | ✔        | 'ecs-modular-monolith'   |
 | `targetGroupName`     | The name for the new target group.                           | ✔        |                          |
 | `vpcId`               | The ID of the VPC where the target group is to be created.   | ✔        |                          |
-| `port`                | The port on which the target group will listen.              | ✔        | 3000                     |
+| `port`                | The port on which the target group will listen.              | ✔        |                          |
 
 ## Outputs
 
@@ -36,8 +36,3 @@ jobs:
                    targetGroupName: 'your-target-group-name'
                    vpcId: 'your-vpc-id'
                    port: 3000
-
-            - name: Print Existing ELB Target Groups
-                run: |
-                    echo "Existing ELB target groups:"
-                    echo "${{ steps.elb-target-group.outputs.existingGroups }}"
