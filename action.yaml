@@ -30,34 +30,34 @@ runs:
       shell: bash
       run: |
         # Check if target group already exists
-        EXISTING_TARGET_GROUP=$(aws elbv2 describe-target-groups --names "${{ inputs.targetGroupName }}" --query 'TargetGroups[0].TargetGroupArn' --output text)
-
+        EXISTING_TARGET_GROUP=$(aws elbv2 describe-target-groups --names "${{ inputs.targetGroupName }}" --query 'TargetGroups[0].TargetGroupArn' --output text 2>/dev/null || echo "None")
+  
         if [ "$EXISTING_TARGET_GROUP" != "None" ]; then
-            echo "Target group already exists with ARN: $EXISTING_TARGET_GROUP"
-            echo "targetGroupArn=$EXISTING_TARGET_GROUP" >> $GITHUB_ENV
-            exit 0
+          echo "Target group already exists with ARN: $EXISTING_TARGET_GROUP"
+          echo "targetGroupArn=$EXISTING_TARGET_GROUP" >> $GITHUB_ENV
+          exit 0
         fi
-
+  
         # Create new target group
         NEW_TARGET_GROUP=$(aws elbv2 create-target-group \
-            --name "${{ inputs.targetGroupName }}" \
-            --protocol HTTP \
-            --port "${{ inputs.port }}" \
-            --target-type "ip" \
-            --vpc-id "${{ inputs.vpcId }}" \
-            --health-check-protocol HTTP \
-            --health-check-path "/health" \
-            --health-check-interval-seconds 30 \
-            --matcher '{"HttpCode": "200,299"}')
-
+          --name "${{ inputs.targetGroupName }}" \
+          --protocol HTTP \
+          --port "${{ inputs.port }}" \
+          --target-type "ip" \
+          --vpc-id "${{ inputs.vpcId }}" \
+          --health-check-protocol HTTP \
+          --health-check-path "/health" \
+          --health-check-interval-seconds 30 \
+          --matcher '{"HttpCode": "200,299"}')
+  
         # Get the new target group ARN
         NEW_TARGET_GROUP_ARN=$(echo $NEW_TARGET_GROUP | jq -r '.TargetGroups[].TargetGroupArn')
-
+  
         # Validate that the target group was created
         if [ -z "$NEW_TARGET_GROUP_ARN" ]; then
-            echo "Failed to create ELB target group"
-            exit 1
+          echo "Failed to create ELB target group"
+          exit 1
         else
-            echo "ELB target group was created successfully"
-            echo "targetGroupArn=$NEW_TARGET_GROUP_ARN" >> $GITHUB_ENV
+          echo "ELB target group was created successfully"
+          echo "targetGroupArn=$NEW_TARGET_GROUP_ARN" >> $GITHUB_ENV
         fi
